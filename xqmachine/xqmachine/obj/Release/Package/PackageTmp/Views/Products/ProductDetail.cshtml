@@ -1,0 +1,491 @@
+﻿@*@using DoAn_LapTrinhWeb.Models
+@using DoAn_LapTrinhWeb.Common*@
+@using PagedList.Mvc
+@using xqmachine.Models.Helpers
+@model ListProduct
+@{
+    ViewBag.Title = Model.P.Product_name;
+    ViewBag.Image = Model.P.Image;
+    var relatedproduct = (List<ListProduct>)ViewBag.relatedproduct;
+    var listImage = (List<xqmachine.Models.db.ProductImage>)ViewBag.ProductImage;
+    var listFeedback = (List<xqmachine.Models.db.Feedback>)ViewBag.ListFeedback;
+    var listReplyFeedback = (List<xqmachine.Models.db.ReplyFeedback>)ViewBag.ListReplyFeedback;
+    var OrderFeedback = (List<xqmachine.Models.db.Oder_Detail>)ViewBag.OrderFeedback;
+    var pagerFeekback = (PagedList.PagedList<xqmachine.Models.db.Feedback>)ViewBag.PagerFeedback;
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    string avgStar = Helper.GetStar(Model.Star);
+    
+}
+<link rel="stylesheet" href="~/Content/UserCSS/simditor.css" />
+<!-- ...:::: Start Breadcrumb Section:::... -->
+<div class="breadcrumb-section breadcrumb-bg-color--black">
+    <div class="breadcrumb-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb-nav breadcrumb-nav-color--black breadcrumb-nav-hover-color--golden">
+                        <nav aria-label="breadcrumb">
+                            <ul>
+                                <li><a href="index.html">Trang Chủ</a></li>
+                                <li>
+                                    <a href="shop-grid-sidebar-left.html">Sản phẩm</a>
+                                </li>
+                                <li class="active" aria-current="page">
+                                    Chi tiết sản phẩm
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ...:::: End Breadcrumb Section:::... -->
+<!-- Start Product Details Section -->
+<div class="product-details-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-5 col-lg-6">
+                <div class="product-details-gallery-area"
+                     data-aos="fade-up"
+                     data-aos-delay="0">
+                    <!-- Start Large Image -->
+                    <div class="product-large-image product-large-image-horaizontal swiper-container">
+                        <div class="swiper-wrapper">
+                            <div class="product-image-large-image swiper-slide zoom-image-hover img-responsive">
+                                <img src="@Model.P.Image" alt="@Model.P.Product_name" />
+                            </div>
+                            @foreach (var item in listImage)
+                            {
+                                <div class="product-image-large-image swiper-slide zoom-image-hover img-responsive">
+                                    <img src="@item.Image" alt="@Model.P.Product_name" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <!-- End Large Image -->
+                    <!-- Start Thumbnail Image -->
+                    <div class="product-image-thumb product-image-thumb-horizontal swiper-container pos-relative mt-5">
+                        <div class="swiper-wrapper">
+                            <div class="product-image-thumb-single swiper-slide">
+                                <img class="img-fluid" src="@Model.P.Image" alt="@Model.P.Product_name" />
+                            </div>
+                            @foreach (var item in listImage)
+                            {
+                                <div class="product-image-thumb-single swiper-slide">
+                                    <img class="img-fluid" src="@item.Image" alt="@Model.P.Product_name" />
+                                </div>
+                            }
+                        </div>
+                        <!-- Add Arrows -->
+                        <div class="gallery-thumb-arrow swiper-button-next"></div>
+                        <div class="gallery-thumb-arrow swiper-button-prev"></div>
+                    </div>
+                    <!-- End Thumbnail Image -->
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-6">
+                <div class="product-details-content-area product-details--golden"
+                     data-aos="fade-up"
+                     data-aos-delay="200">
+                    <!-- Start  Product Details Text Area-->
+                    <div class="product-details-text">
+                        <h4 class="title">@Model.P.Product_name</h4>
+                        <div class="d-flex align-items-center">
+                            <ul class="review-star">
+                                @Html.Raw(Helper.GetStar(Model.Star))
+                            </ul>
+                            <a href="#" class="customer-review ml-2">(@ViewBag.CountFeedback đánh giá)</a>
+                        </div>
+                        @if (Model.P.Discount.Discount_star < DateTime.Now && Model.P.Discount.Discount_end > DateTime.Now && Model.P.Discount.Discount_price != 0)
+                        {
+                            <div class="price">
+                                <del style="font-size:20px; margin-right:7px;">@Model.P.Price.ToString("#,0₫", culture.NumberFormat)</del>
+                                <span style="color: #d0021c; font-weight: 600;">@((Model.P.Price - Model.P.Discount.Discount_price).ToString("#,0₫", culture.NumberFormat))</span>
+                                <span style="font-size:16px;" class="text-success">-@((Model.P.Discount.Discount_price / Model.P.Price).ToString("0%"))</span>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="price" style="color: #d0021c; font-weight: 600;">@Model.P.Price.ToString("#,0₫", culture.NumberFormat)</div>
+                        }
+                        <div>
+                            <div style="font-weight:600;">
+                                Khuyến mãi liên quan
+                            </div>
+                            <ul style="list-style: inside;">
+                                <li class="ml-sm-3">
+                                    Áp dụng mã <strong>@Model.P.Discount.Discount_name</strong>  giảm @((Model.P.Discount.Discount_price / Model.P.Price).ToString("0%")) với mức @Model.P.Discount.Discount_price.ToString("#,0₫", culture.NumberFormat) với sản phẩm hiện tại<a href="#" style="color: #024dbc; font-weight: 500;"> Xem chi tiết</a>
+                                </li>
+                                @*<li class="ml-sm-3">
+                                    Nhập mã <strong>XQ300</strong>  giảm thêm 3% tối đa 300.000đ khi thanh toán qua VNPAY-QR.<a href="#" style="color: #024dbc; font-weight: 500;"> Xem chi tiết</a>
+                                </li>
+                                <li class="ml-sm-3">
+                                    Nhập mã <strong>XQ3800</strong> giảm thêm 4% tối đa 800.000đ. Áp dụng cho một số sản phẩm Apple trên 20.000.000đ khi thanh toán qua VNPAY-QR.<a href="#" style="color: #024dbc; font-weight:500;"> Xem chi tiết</a>
+                                </li>*@
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- End  Product Details Text Area-->
+                    <!-- Start Product Variable Area -->
+                    <div class="product-details-variable">
+                        <!-- Product Variable Single Item -->
+                        <div class="variable-single-item">
+                            <div class="product-stock">
+                                <span class="product-stock-in">
+                                    <i class="ion-checkmark-circled"></i>
+                                </span>
+                                Còn lại @Model.P.Quantity
+                            </div>
+                        </div>
+                        <!-- Product Variable Single Item -->
+                        <div class="d-flex align-items-center">
+                            @if (Model.P.Quantity != "0")
+                            {
+                                <div class="variable-single-item">
+                                    <span>Số Lượng</span>
+                                    <div class="product-variable-quantity">
+                                        <input step="1" min="1" max="@Model.P.Quantity" id="quantity" autocomplete="off" name="quantity" value="1" type="number" />
+                                    </div>
+                                </div>
+                                <div class="d-flex" style="gap:7px;">
+                                    <div class="product-add-to-cart-btn d-flex">
+                                        <a style="user-select:none!important;" data-id="@Model.P.Product_id" class="buyNow btn btn-block btn-lg btn-black-default-hover">Mua ngay</a>
+                                    </div>
+                                    <div class="product-add-to-cart-btn d-flex">
+                                        <a style="user-select: none !important; border-color: #FE8C23; color: #FE8C23;background:#fff;" data-id="@Model.P.Product_id" class="btnAddToCart btn btn-block btn-lg btn-black-default-hover">Thêm vào giỏ</a>
+                                    </div>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="variable-single-item">
+                                    <span>Số Lượng</span>
+                                    <div class="product-variable-quantity">
+                                        <input step="0" min="0" name="quantity" value="0" readonly />
+                                    </div>
+                                </div>
+                                <div class="product-add-to-cart-btn">
+                                    <a class="btn btn-block btn-lg btn-black-default-hover"> Liên hệ</a>
+                                </div>
+                            }
+                        </div>
+                        <!-- Start  Product Details Meta Area-->
+                        <div class="product-details-meta mb-20">
+                            <a class="icon-space-right"><i class="icon-heart"></i>Thêm vào yêu thích</a>
+                            <a class="icon-space-right"><i class="icon-refresh"></i>So sánh sản phẩm</a>
+                        </div>
+                        <!-- End  Product Details Meta Area-->
+                    </div>
+                    <!-- End Product Variable Area -->
+                    <!-- Start  Product Details Catagories Area-->
+                    <div class="product-details-catagory mb-2">
+                        <span class="title">Thương hiệu:</span>
+                        <ul>
+                            <li><a href="#">@Model.P.Brand.Brand_name</a></li>
+                        </ul>
+                    </div>
+                    <!-- End  Product Details Catagories Area-->
+                    <!-- Start  Product Details Catagories Area-->
+                    <div class="product-details-catagory mb-2">
+                        <span class="title">Danh Mục:</span>
+                        <ul>
+                            <li><a href="#">@Model.P.Genre.Genre_name</a></li>
+                        </ul>
+                    </div>
+                    <!-- End  Product Details Catagories Area-->
+                    <!-- Start  Product Details Social Area-->
+                    <div class="product-details-social">
+                        <span class="title">Chia sẻ:</span>
+                        <ul>
+                            <li>
+                                <a style="cursor:pointer;" id="fb-share-button"><i class="fa fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-pinterest"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-linkedin"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- End  Product Details Social Area-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Product Details Section -->
+<!-- Start Product Content Tab Section -->
+<div class="product-details-content-tab-section section-top-gap-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="product-details-content-tab-wrapper"
+                     data-aos="fade-up"
+                     data-aos-delay="0">
+                    <!-- Start Product Details Tab Button -->
+                    <ul class="nav tablist product-details-content-tab-btn d-flex justify-content-center">
+                        <li>
+                            <a class="nav-link active"
+                               data-bs-toggle="tab"
+                               href="#description">
+                                Mô tả sản phẩm
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link"
+                               data-bs-toggle="tab"
+                               href="#specification">
+                                Thông số kỹ thuật
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link" data-bs-toggle="tab" href="#review">
+                                Đánh giá
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- End Product Details Tab Button -->
+                    <!-- Start Product Details Tab Content -->
+                    <div class="product-details-content-tab">
+                        <div class="tab-content">
+                            <!-- Start Product Details Tab Content Singel -->
+                            <div class="tab-pane active show" id="description">
+                                <div class="single-tab-content-item">
+                                    <p id="description">
+                                        @Html.Raw(Model.P.Description)
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- End Product Details Tab Content Singel -->
+                            <!-- Start Product Details Tab Content Singel -->
+                            <div class="tab-pane" id="specification">
+                                <div class="single-tab-content-item specs">
+                                    @if (Model.P.Specifications != null)
+                                    {
+                                        @Html.Raw(Model.P.Specifications)
+                                    }
+                                    else
+                                    {
+                                        <span class="d-flex justify-content-center" style="font-size:20px;">Đang cập nhật</span>
+                                    }
+                                </div>
+                            </div>
+                            <!-- End Product Details Tab Content Singel -->
+                            <!-- Start Product Details Tab Content Singel -->
+                            <div class="tab-pane" id="review">
+                                <div class="single-tab-content-item">
+                                    <!-- Start - Review Comment -->
+                                    <div class="review-form" style="margin-bottom:30px;">
+                                        <div class="text-center">
+                                            <h5>THÊM ĐÁNH GIÁ</h5>
+                                            <span class="ms-2 text-secondary">(Đánh giá được tính khi bạn đã mua sản phẩm, chọn sao bên dưới để đánh giá sao)</span>
+                                        </div>
+                                        <form method="post">
+                                            <input id="product_id" hidden value="@Model.P.Product_id" />
+                                            <input id="genre_id" hidden value="@Model.P.Genre_id" />
+                                            <input id="discount_id" hidden value="@Model.P.Disscount_id" />
+                                            <div onmouseout="CRateSelected()" style="font-size: 23px; text-align:center; cursor:pointer;">
+                                                <i id="rate1" onmouseout="CRateOut(1)" onmouseover="CRateOver(1)" onclick="CRateClick(1)" class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i id="rate2" onmouseout="CRateOut(2)" onmouseover="CRateOver(2)" onclick="CRateClick(2)" class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i id="rate3" onmouseout="CRateOut(3)" onmouseover="CRateOver(3)" onclick="CRateClick(3)" class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i id="rate4" onmouseout="CRateOut(4)" onmouseover="CRateOver(4)" onclick="CRateClick(4)" class="fa fa-star-o" aria-hidden="true"></i>
+                                                <i id="rate5" onmouseout="CRateOut(5)" onmouseover="CRateOver(5)" onclick="CRateClick(5)" class="fa fa-star-o" aria-hidden="true"></i>
+                                            </div>
+                                            <input id="lblRating" hidden value="5" />
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="default-form-box">
+                                                        <label for="comment-review-text">Nội dung bình luận <span class="text-danger">*</span></label>
+                                                        <textarea id="comment__con" class="rating_login" hidden></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <button class="btn btn-md btn-black-default-hover" style="width: 98px;" id="create_submit_comment" type="button"> Gửi đi </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <ul class="comment">
+                                        <!-- Start - Review Comment list-->
+                                        @foreach (var comment in listFeedback)
+                                        {
+                                            if (comment.Product_id == Model.P.Product_id)
+                                            {
+                                                <li class="comment-list">
+                                                    <div class="comment-wrapper">
+                                                        <div class="comment-img">
+                                                            <img src="@comment.AspNetUser.Avatar" alt="" />
+                                                        </div>
+                                                        <div class="comment-content">
+                                                            <div class="comment-content-top" style="margin-bottom:5px;">
+                                                                <div class="comment-content-left">
+                                                                    <h6 class="comment-name">
+                                                                        @comment.AspNetUser.FullName
+                                                                        <span class="@(Helper.IsRole(comment.AspNetUser.AspNetRoles,comment.AspNetUser.Id,1)? "bg-role": "")">@(Helper.IsRole(comment.AspNetUser.AspNetRoles, comment.AspNetUser.Id, 1) ? "Quản trị viên": "")</span>
+                                                                        <span>
+                                                                            @{ string fbconfirm = "";
+                                                                                string verify = "";
+                                                                                foreach (var odt in OrderFeedback)
+                                                                                {
+                                                                                    if (odt.Order.UserId == comment.UserId && odt.Product_id == comment.Product_id && odt.Order.Status == "3")
+                                                                                    {
+                                                                                        fbconfirm = "Đã mua tại XQMACHINE";
+                                                                                        verify = "<i class='fa fa-check-circle' aria-hidden='true'></i>";
+                                                                                    }
+                                                                                }
+                                                                                <span class="fs-14px text-success">@Html.Raw(verify)<span style="margin-left:3px;">@fbconfirm</span></span>
+                                                                            }
+                                                                        </span>
+                                                                    </h6>
+                                                                    <ul class="review-star">
+                                                                        @Html.Raw(Helper.GetStar(comment.Rate_star))
+                                                                    </ul>
+                                                                </div>
+                                                                <div class="comment-content-right">
+                                                                    @if (User.Identity.IsAuthenticated)
+                                                                    {
+                                                                        <a style="cursor:pointer;" onclick="CreateReplyFeedback(@comment.Feedback_id,'@comment.AspNetUser.FullName')"><i class="fa fa-reply"></i>Reply</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a><i class="fa fa-reply"></i>Reply</a>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <div class="para-content">
+                                                                <div>@Html.Raw(comment.Content)</div>
+                                                                <p style="font-size: 12px; margin-bottom: 8px; color: #a5a5a5; ">@comment.Create_at.ToString("HH:mm dd-MM-yyyy")</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <form action="/" method="post">
+                                                            <textarea id="reply_comment_con_@comment.Feedback_id" hidden autofocus></textarea>
+                                                            <button id="submit_reply_comm_@comment.Feedback_id" hidden class="btn btn-md btn-black-default-hover" style=" margin-top: 15px; margin-bottom: 12px; width: 98px;" type="button">Gửi đi</button>
+                                                        </form>
+                                                    </div>
+                                                    <!-- Start - Review Comment Reply-->
+                                                    @foreach (var reply in listReplyFeedback)
+                                                    {
+                                                        <ul class="comment-reply">
+                                                            @if (reply.Feedback_id == comment.Feedback_id)
+                                                            {
+                                                                <li class="comment-reply-list">
+                                                                    <div class="comment-wrapper">
+                                                                        <div class="comment-img">
+                                                                            <img src="@reply.AspNetUser.Avatar" alt="avatar" />
+                                                                        </div>
+                                                                        <div class="comment-content">
+                                                                            <div class="comment-content-top" style="margin-bottom:5px;">
+                                                                                <div class="comment-content-left">
+                                                                                    <h6 class="comment-name">@reply.AspNetUser.FullName <span class="@(Helper.IsRole(reply.AspNetUser.AspNetRoles,reply.AspNetUser.Id,1)? "bg-role": "")">@(Helper.IsRole(reply.AspNetUser.AspNetRoles, reply.AspNetUser.Id, 1) ? "Quản trị viên": "")</span></h6>
+                                                                                </div>
+                                                                                <div class="comment-content-right">
+                                                                                    <a style="cursor:pointer;" onclick="createChildReply(@comment.Feedback_id,@reply.Rep_feedback_id, '@reply.AspNetUser.FullName')"><i class="fa fa-reply"></i>Reply</a>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="para-content">
+                                                                                <div> @Html.Raw(reply.Content)</div>
+                                                                                <p style="font-size: 12px; margin-bottom: 8px; color: #a5a5a5; ">@reply.Create_at.ToString("HH:mm dd-MM-yyyy")</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                        <div>
+                                                            <form action="/" method="post">
+                                                                <textarea id="childRepContent_@reply.Rep_feedback_id" hidden autofocus></textarea>
+                                                                <button id="submit_child_reply_comm_@reply.Rep_feedback_id" hidden style=" margin-top: 15px; margin-bottom: 12px; width: 98px;" class="btn btn-md btn-black-default-hover" type="button">Gửi đi</button>
+                                                            </form>
+                                                        </div>
+                                                    }
+                                                    <!-- End - Review Comment Reply-->
+                                                </li>
+                                                <!-- End - Review Comment list-->
+                                            }
+                                        }
+                                    </ul>
+                                    <!-- End - Review Comment -->
+                                </div>
+                            </div>
+                            <!-- End Product Details Tab Content Singel -->
+                        </div>
+                    </div>
+                    <!-- End Product Details Tab Content -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Product Content Tab Section -->
+<!-- Start Product Default Slider Section -->
+<div class="product-default-slider-section section-top-gap-100 section-fluid">
+    <!-- Start Section Content Text Area -->
+    <div class="section-title-wrapper" data-aos="fade-up" data-aos-delay="0">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-content-gap">
+                        <div class="secton-content">
+                            <h3 class="section-title">Cùng @Model.P.Genre.Genre_name</h3>
+                            <p>
+                                Duyệt qua bộ sưu tập các sản phẩm liên quan của chúng tôi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Start Section Content Text Area -->
+    <div class="product-wrapper" data-aos="fade-up" data-aos-delay="0">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="product-slider-default-1row default-slider-nav-arrow">
+                        <!-- Slider main container -->
+                        <div class="swiper-container product-default-slider-4grid-1row">
+                            <!-- Additional required wrapper -->
+                            @Html.Partial("_PartialSwiper", relatedproduct)
+                        </div>
+                        <!-- If we need navigation buttons -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Product Default Slider Section -->
+@section scripts{
+    <script src="~/Scripts/UserJS/add-to-cart.js"></script>
+    <script type="text/javascript" src="~/Scripts/UserJS/simditor/module.js"></script>
+    <script type="text/javascript" src="~/Scripts/UserJS/simditor/hotkeys.js"></script>
+    <script type="text/javascript" src="~/Scripts/UserJS/simditor/dompurify.js"></script>
+    <script type="text/javascript" src="~/Scripts/UserJS/simditor/simditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/UserJS/simditor/mobilecheck.js"></script>
+    <script src="~/Scripts/UserJS/comment-reply-product.js"></script>
+    <script>
+        var fbButton = document.getElementById("fb-share-button");
+        var url = window.location.href;
+        fbButton.addEventListener("click", function () {
+            window.open(
+                "https://www.facebook.com/sharer/sharer.php?u=" + url,
+                "facebook-share-dialog",
+                "width=600,height=600"
+            );
+            return false;
+        });
+
+    </script>
+}

@@ -1,0 +1,70 @@
+﻿@model xqmachine.Models.ExternalLoginConfirmationViewModel
+@{
+    ViewBag.Title = "Đăng ký";
+}
+
+<!-- ...:::: Start Breadcrumb Section:::... -->
+<div class="breadcrumb-section breadcrumb-bg-color--black">
+    <div class="breadcrumb-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb-nav breadcrumb-nav-color--black breadcrumb-nav-hover-color--golden">
+                        <nav aria-label="breadcrumb">
+                            <ul>
+                                <li><a href="@Url.Action("Index","Home")">Trang Chủ</a></li>
+                                <li class="active" aria-current="page">
+                                    Đăng ký
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ...:::: End Breadcrumb Section:::... -->
+<!-- ...:::: Start Customer Login Section :::... -->
+<div class="customer-login">
+    <div class="container">
+        <div class="row d-xl-flex justify-content-center">
+            <!--login area start-->
+            <div class="col-lg-4 col-md-4">
+                <div class="account_form" data-aos="fade-up" data-aos-delay="0">
+                    @using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <h3 class="text-center">Đăng ký</h3>
+                        <hr />
+                        @Html.ValidationSummary("", new { @class = "text-danger" })
+                        <label class="mb-1">Họ tên<span class="text-danger">*</span></label>
+                        <div class="default-form-box">
+                            @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { type = "text" } })
+                            @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                        </div>
+                        <label class="mb-1">Email <span class="text-danger">*</span></label>
+                        <div class="default-form-box">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { type = "text" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                        <label class="mb-1">Số điện thoại<span class="text-danger">*</span></label>
+                        <div class="default-form-box">
+                            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { type = "text" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="login_submit">
+                            <button class="btn btn-md btn-black-default-hover mb-4 w-100" style="height:45px;" type="submit">Đăng ký</button>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!--login area start-->
+        </div>
+    </div>
+</div>
+<!-- ...:::: End Customer Login Section :::... -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

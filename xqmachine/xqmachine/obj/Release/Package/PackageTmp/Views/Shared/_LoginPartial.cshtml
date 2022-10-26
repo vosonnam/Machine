@@ -1,0 +1,49 @@
+﻿@using xqmachine.Models.Helpers
+@if (Request.IsAuthenticated)
+{
+    if (Request.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <li>
+            <a href="@Url.Action("DashBoards","Admin")">Admin Panel</a>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a href="@Url.Action("Contact","Home")">Liên Hệ</a>
+        </li>
+    }
+    <li class="has-dropdown has-megaitem">
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <a href="@Url.Action("EditProfile","Account")"> Chào @User.Identity.GetFullName()! </a>
+            @*<img src="@User.Identity.GetAvatar()" alt="user" />*@
+            <ul class="sub-menu">
+                @if (!User.Identity.IsConfirmEmail())
+                {
+                    <li><span class="text-danger"> Vui lòng xác nhận email để hoàn tất đăng ký</span></li>
+                }
+                <li><a href="@Url.Action("TrackingOrder","Account")">Lịch sử mua hàng</a></li>
+                <li><a href="@Url.Action("Address","Account")">Sổ địa chỉ</a></li>
+                <li><a href="@Url.Action("ChangePassword","Account")">Đổi mật khẩu</a></li>
+                @*<li><a href="@Url.Action("LogOff","Account")">Đăng xuất</a></li>*@
+                <li><a href="javascript:document.getElementById('logoutForm').submit()">Đăng xuất</a></li>
+            </ul>
+        }
+    </li>
+}
+else
+{
+    <li>
+         <a href="@Url.Action("Contact","Home")">Liên Hệ</a>
+    </li>
+    <li class="has-dropdown has-megaitem">
+        <a href="@Url.Action("Login","Account")">Đăng nhập</a>
+        <ul class="sub-menu">
+            <li><a href="@Url.Action("Register","Account")">Đăng ký</a></li>
+            <li><a href="@Url.Action("ForgotPassword","Account")">Quên mật khẩu</a></li>
+        </ul>
+    </li>
+}

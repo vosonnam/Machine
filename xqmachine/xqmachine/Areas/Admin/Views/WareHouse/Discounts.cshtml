@@ -1,0 +1,98 @@
+﻿@using PagedList.Mvc
+@model PagedList.PagedList<xqmachine.Models.Helpers.ExcelDiscountModel>
+
+@{
+    ViewBag.Title = "Nhập giảm giá";
+    string prePageIcon = "<i class='previous'></i>";
+    string nextPageIcon = "<i class='next'></i>";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <h2>@ViewBag.Title</h2>
+
+
+        <div class="row justify-content-between">
+            <span class="text-info">
+                @(ViewBag.UploadedFile??"Chưa có file dữ liệu")
+            </span>
+            <span class="col-md-offset-2 col-sm-2">
+                @Html.ActionLink("Về quản lý kho", "Index", "WareHouse", null, new { @class = "btn btn-primary" })
+            </span>
+        </div>
+
+        <table class="table">
+            <tr>
+                <th>
+                    DiscountId
+                </th>
+                <th>
+                    DiscountName
+                </th>
+                <th>
+                    DiscountStart
+                </th>
+                <th>
+                    DiscountEnd
+                </th>
+                <th>
+                    DiscountPrice
+                </th>
+                <th>
+                    DiscountCode
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
+            <div>
+                @Html.PagedListPager(Model, page => Url.Action("Discounts", new { search = @ViewBag.search, page }), new PagedListRenderOptions
+               {
+                   LinkToPreviousPageFormat = prePageIcon,
+                   LinkToNextPageFormat = nextPageIcon,
+                   DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+                   DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                   DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                   DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                   MaximumPageNumbersToDisplay = 10
+               })
+            </div>
+        </div>
+    </div>
+</div>
+<link href="~/Content/AdminCSS/PagedList.css" rel="stylesheet" />

@@ -1,0 +1,63 @@
+﻿@model xqmachine.Models.UploadModel
+
+@{
+    ViewBag.Title = "Quản lý Kho";
+}
+<div class="container-fluid">
+    <h2 class="text-center">@ViewBag.Title</h2>
+
+    <div class="row">
+        <section>
+            @using (Html.BeginForm("UploadFiles", "WareHouse", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-horizontal">
+                    <h4>Nhập kho</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.ValidationMessage("SuccesUploadFiles", "", new { @class = "text-success" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.file, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.file, new { htmlAttributes = new { @class = "form-control", @type = "file", @name = "file", @accept = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } })
+                            @Html.ValidationMessageFor(model => model.file, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            @*<input type="submit" value="Import" class="btn btn-primary" />*@
+                            <button type="submit" value="Import" class="btn btn-primary"><i class="fa fa-file-import"></i>Nhập sản phẩm</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            <hr/>
+            <div class="row justify-content-around">
+                <span class="text-info">
+                    @(ViewBag.UploadedFile??"Chưa có file dữ liệu")
+                </span>
+                <br/>
+                <span class="col-md-offset-2 col-sm-2">
+                    <a class="btn btn-primary" href="@Url.Action("Products","WareHouse")">Sản phẩm</a>
+                </span>
+                <span class="col-md-offset-2 col-sm-2">
+                    <a class="btn btn-primary" href="@Url.Action("Genres","WareHouse")">Thương hiệu</a>
+                </span>
+                <span class="col-md-offset-2 col-sm-2">
+                    <a class="btn btn-primary" href="@Url.Action("Brands","WareHouse")">Danh mục</a>
+                </span>
+                <span class="col-md-offset-2 col-sm-2">
+                    <a class="btn btn-primary" href="@Url.Action("Discounts","WareHouse")">Giảm giá</a>
+                </span>
+            </div>
+        </section>
+        <section>
+            @Html.Partial("_PartialExportFile")
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
